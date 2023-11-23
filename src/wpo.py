@@ -44,11 +44,11 @@ class WolfPackOptimization:
         # Extract selected features from the dataset
         selected_features = [col for col, val in zip(self.data.columns, individual) if val]
         # Subset the data with selected features
-        subset_data = self.data[selected_features]
+        subset_data = self.data
 
         # Placeholder for model training and evaluation
         accuracy = self.train_and_evaluate_model(subset_data, self.data['spam'])
-        return accuracy,
+        return accuracy
 
     def train_and_evaluate_model(self, subset_data, labels):
         print(subset_data)
@@ -65,6 +65,9 @@ class WolfPackOptimization:
         # Replace this with your actual machine learning model and training logic
         model = RandomForestClassifier()
         model.fit(X_train, y_train)
+        
+        # print the accuracy of the model
+        print("Accuracy of the model is: ", model.score(X_test, y_test))
 
         # Make predictions on the test set
         predictions = model.predict(X_test)
