@@ -2,16 +2,27 @@
 this file is for the wolf pack optimization algorithm
 """
 import random
-from deap import base, creator, tools
+import pandas as pd
+from deap import base, creator, tools, algorithms
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 class WolfPackOptimization:
-    def __init__(self, population_size, generations, crossover_prob, mutation_prob, dimension):
+    def __init__(self, population_size, generations, crossover_prob, mutation_prob, dimension, data_file):
         self.population_size = population_size
         self.generations = generations
         self.crossover_prob = crossover_prob
         self.mutation_prob = mutation_prob
         self.dimension = dimension
+        self.data_file = data_file
+        self.data = self.load_data()
         self.toolbox = self._create_toolbox()
+
+    def load_data(self):
+        return pd.read_csv(self.data_file)
 
     def _create_toolbox(self):
         creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -30,13 +41,37 @@ class WolfPackOptimization:
         return toolbox
 
     def evaluate(self, individual):
-        # This is where you should put your spam detection model and evaluation logic
-        # You need to train and evaluate a classifier using the selected features
-        # The returned value should be the performance metric you want to maximize (e.g., accuracy)
+        # Extract selected features from the dataset
+        selected_features = [col for col, val in zip(self.data.columns, individual) if val]
+        # Subset the data with selected features
+        subset_data = self.data[selected_features]
 
-        # For demonstration purposes, let's use a dummy fitness function
-        fitness = sum(individual)
-        return fitness,
+        # Placeholder for model training and evaluation
+        accuracy = self.train_and_evaluate_model(subset_data, self.data['spam'])
+        return accuracy,
+
+    def train_and_evaluate_model(self, subset_data, labels):
+        print(subset_data)
+        # Assuming 'text' is the column containing text data
+        text_data = subset_data['text']
+
+        # Convert text data to numerical representation using TF-IDF
+        vectorizer = TfidfVectorizer()
+        X = vectorizer.fit_transform(text_data)
+
+        # Split the data into training and testing sets
+        X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.2, random_state=42)
+
+        # Replace this with your actual machine learning model and training logic
+        model = RandomForestClassifier()
+        model.fit(X_train, y_train)
+
+        # Make predictions on the test set
+        predictions = model.predict(X_test)
+
+        # Evaluate the model (you may want to use other metrics depending on your problem)
+        accuracy = accuracy_score(y_test, predictions)
+        return accuracy
 
     def run(self):
         population = self.toolbox.population(n=self.population_size)
@@ -49,3 +84,23 @@ class WolfPackOptimization:
         best_features = [i for i, val in enumerate(best_individual) if val]
 
         return best_features
+
+# Example usage
+if __name__ == "__main__":
+    # Set your CSV file path
+    csv_file_path = "data/emails.csv"
+
+    # Set your dataset dimension (number of features)
+    dataset_dimension = 100
+
+    wpo = WolfPackOptimization(
+        population_size=50,
+        generations=100,
+        crossover_prob=0.8,
+        mutation_prob=0.2,
+        dimension=dataset_dimension,
+        data_file=csv_file_path
+    )
+
+    selected_features = wpo.run()
+    print("Selected features:", selected_features)
