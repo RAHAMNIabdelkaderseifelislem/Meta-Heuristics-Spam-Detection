@@ -1,5 +1,16 @@
 """
 this file is for the shark smell optimization algorithm
+psudo code
+1. Initialize a population of sharks with random positions in the search space.
+2. For each shark, calculate its fitness using the objective function.
+3. For each iteration:
+    1. For each shark in the population:
+        1. Calculate the smell gradient in the neighborhood of the shark.
+        2. Move the shark towards the direction of the highest smell gradient.
+    2. For each shark, calculate its new fitness.
+    3. If a shark's fitness is higher than the best fitness found so far, update the best fitness and the best position.
+4. Repeat the iterations until a stopping condition is met (e.g., maximum number of iterations, or a satisfactory fitness level is reached).
+5. The best position found by the sharks is the solution to the optimization problem.
 """
 
 import random

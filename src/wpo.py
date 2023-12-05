@@ -1,5 +1,19 @@
 """
 this file is for the wolf pack optimization algorithm
+psudo code
+1. Initialize the wolf pack with random positions in the search space.
+2. For each wolf, calculate its fitness using the objective function.
+3. Sort the wolves based on their fitness.
+4. For each iteration:
+    1. Select the alpha wolf (the one with the highest fitness).
+    2. For each wolf in the pack:
+        1. Calculate the distance to the alpha wolf.
+        2. If the distance is less than a certain threshold, move the wolf towards the alpha wolf.
+        3. If the distance is greater than the threshold, move the wolf in a random direction.
+    3. For each wolf, calculate its new fitness.
+    4. If a wolf's fitness is higher than the alpha wolf's fitness, it becomes the new alpha wolf.
+5. Repeat the iterations until a stopping condition is met (e.g., maximum number of iterations, or a satisfactory fitness level is reached).
+6. The position of the alpha wolf is the solution to the optimization problem.
 """
 import random
 import pandas as pd
